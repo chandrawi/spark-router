@@ -1,0 +1,23 @@
+{
+    "name": "sparklib/spark-router",
+    "description": "lightweight PHP router library",
+    "keywords": ["routing", "router"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "chandra wijaya sentosa",
+            "email": "chandra.w.sentosa@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "SparkLib\\SparkRouter\\": "src/",
+            "App\\": "test/app"
+        }
+    }
+}

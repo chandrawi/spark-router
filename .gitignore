@@ -1,0 +1,10 @@
+### VisualStudioCode ###
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+*.code-workspace
+
+### PHP and Composer ###
+/vendor/
+composer.lock
+phpunit.xml
