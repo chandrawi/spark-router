@@ -201,4 +201,43 @@ class RouteFactory
         $this->map(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], $uri, $action);
     }
 
+    /**
+     * Remove non export properties
+     */
+    public function removeNonExportProperties(): void
+    {
+        unset($this->groupPrefix);
+    }
+
+    /**
+     * Remove closure action of routes
+     */
+    public function removeClosureAction(): void
+    {
+        foreach ($this->staticRoutes as $uriKey => $routes) {
+            foreach ($routes as $methodKey => $action) {
+                if (is_callable($action)) {
+                    $this->staticRoutes[$uriKey][$methodKey] = null;
+                }
+            }
+        }
+        foreach ($this->dynamicRoutes as $key => $route) {
+            if (is_callable($route[4])) {
+                $this->dynamicRoutes[$key][4] = null;
+            }
+        }
+    }
+
+    /**
+     * Magic function for export object and cached files
+     * @param array $array
+     */
+    public static function __set_state(array $array): RouteFactory
+    {
+        $object = new RouteFactory;
+        $object->staticRoutes = $array['staticRoutes'];
+        $object->dynamicRoutes = $array['dynamicRoutes'];
+        return $object;
+    }
+
 }

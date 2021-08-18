@@ -12,6 +12,8 @@ use SparkLib\App\Loader;
 
 $app = new Loader;
 
-$app->run();
+// $app->run();
+
+$app->runCached();
 
 // $app->test();

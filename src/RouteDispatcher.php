@@ -25,6 +25,12 @@ class RouteDispatcher
     /** Array of matched route data */
     private $data;
 
+    /** Matched route file name */
+    private $fileName;
+
+    /** Route file directory path */
+    private $directory;
+
     /**
      * Constructor.
      */
@@ -65,6 +71,7 @@ class RouteDispatcher
                 $routes = require $filePath;
                 //echo var_export($routes);
                 if ($routes instanceof RouteFactory) {
+                    $this->fileName = $files[$matchIndex][1];
                     return $routes;
                 }
                 // else bad route file exception
@@ -73,6 +80,35 @@ class RouteDispatcher
         }
         // else no file matched with request exception
         return new RouteFactory;
+    }
+
+    /**
+     * Get route list from a cached route file in cached directory.
+     * @param string $uri
+     * @param string $dir
+     * @param string $cachedDir
+     * @param array $files
+     * @return RouteFactory $routes
+     */
+    public function getCachedRoutesFile(string $uri, string $dir, string $cachedDir, array $files): RouteFactory
+    {
+        $this->directory = $dir;
+        return $this->getRoutesFile($uri, $cachedDir, $files);
+    }
+
+    /**
+     * Set route file path for fallback from dispatchCached
+     * @param string $filePath
+     */
+    public function setFallbackRouteFile($filePath): void
+    {
+        if (file_exists($filePath)) {
+            $routes = require $filePath;
+            if ($routes instanceof RouteFactory) {
+                $this->directory = substr($filePath, 0, strrpos($filePath, '/'));
+                $this->fileName = substr($filePath, strrpos($filePath, '/'));
+            }
+        }
     }
 
     /**
@@ -127,6 +163,37 @@ class RouteDispatcher
             }
         }
 
+        return $this->routeInfo();
+    }
+
+    /**
+     * Dispatch between request and route list by matching URI and http method.
+     * Fallback to normal dispatch for closure action
+     * @param RouteFactory $routes
+     * @param string $method
+     * @param string $uri
+     * @return dispatchInfo
+     */
+    public function dispatchCached(RouteFactory $routes, string $method, string $uri):array
+    {
+        $uri = $this->addSlash($uri);
+        $staticRoutes = $routes->staticRoutes();
+        if (!$this->matchSimpleRoute($staticRoutes, $method, $uri)) {
+            
+            $dynamicRoutes = $routes->dynamicRoutes();
+            foreach ($dynamicRoutes as $dynamicRoute) {
+                if ($this->matchDynamicRoute($dynamicRoute, $method, $uri)) {
+                    break;
+                }
+            }
+        }
+
+        if ($this->action === null) {
+            $routes = require $this->directory . $this->fileName;
+            if ($routes instanceof RouteFactory) {
+                return $this->dispatch($routes, $method, $uri);
+            }
+        }
         return $this->routeInfo();
     }
 

@@ -20,10 +20,27 @@ class Loader
         $routes = $this->dispatcher->getRoutesFile($uri, ROUTE_DIR, ROUTE_FILES);
         $dispatch = $this->dispatcher->dispatch($routes, $_SERVER['REQUEST_METHOD'], $uri);
         
-        if ($dispatch['status'] == $this->dispatcher::FOUND) {
+        if ($dispatch['status'] == RouteDispatcher::FOUND) {
             $this->action($dispatch['action'], $dispatch['data']);
         }
-        else if ($dispatch['status'] == $this->dispatcher::METHOD_NOT_ALLOWED) {
+        else if ($dispatch['status'] == RouteDispatcher::METHOD_NOT_ALLOWED) {
+            $this->methodNotAllowed();
+        }
+        else {
+            $this->notFound();
+        }
+    }
+
+    public function runCached()
+    {
+        $uri = $this->dispatcher->prepareUri($_SERVER['REQUEST_URI'], BASE_URI);
+        $routes = $this->dispatcher->getCachedRoutesFile($uri, ROUTE_DIR, ROUTE_CACHED_DIR, ROUTE_FILES);
+        $dispatch = $this->dispatcher->dispatchCached($routes, $_SERVER['REQUEST_METHOD'], $uri);
+        
+        if ($dispatch['status'] == RouteDispatcher::FOUND) {
+            $this->action($dispatch['action'], $dispatch['data']);
+        }
+        else if ($dispatch['status'] == RouteDispatcher::METHOD_NOT_ALLOWED) {
             $this->methodNotAllowed();
         }
         else {
