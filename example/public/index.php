@@ -8,7 +8,7 @@ require '../app/Config.php';
 
 require '../../vendor/autoload.php';
 
-use App\Loader;
+use SparkLib\App\Loader;
 
 $app = new Loader;
 

@@ -17,7 +17,7 @@
     "autoload": {
         "psr-4": {
             "SparkLib\\SparkRouter\\": "src/",
-            "App\\": "test/app"
+            "SparkLib\\App\\": "example/app"
         }
     }
 }

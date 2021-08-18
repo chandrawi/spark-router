@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace SparkLib\App;
 
 use SparkLib\SparkRouter\RouteDispatcher;
 
@@ -45,7 +45,7 @@ class Loader
         if (is_string($action)) {
             $act = explode('@', $action);
             if (isset($act[0]) && isset($act[1])) {
-                $class = '\\App\\Controllers\\'. $act[0];
+                $class = 'SparkLib\\App\\Controllers\\'. $act[0];
                 $controller = new $class;
                 call_user_func_array([$controller, $act[1]], $data);
             }
