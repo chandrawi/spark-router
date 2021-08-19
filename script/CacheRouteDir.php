@@ -18,10 +18,10 @@ if (file_exists($routeDir) && file_exists($cacheDir)) {
         if (substr($file, -3) == 'php') {
             echo $file ."\n";
 
-            $route = require $routeDir .'/'. $file;
+            $route = require $filePath = $routeDir .'/'. $file;
             if ($route instanceof RouteFactory) {
                 $route->removeNonExportProperties();
-                $route->removeClosureAction();
+                $route->transformClosureAction($filePath);
                 $export = "<?php\r\nreturn ". var_export($route, true) .";";
                 file_put_contents($cacheDir .'/'. $file, $export);
             } else {

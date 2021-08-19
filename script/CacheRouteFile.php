@@ -17,7 +17,7 @@ if (file_exists($routeFile) && file_exists($cacheDir)) {
     $route = require $routeFile;
     if ($route instanceof RouteFactory) {
         $route->removeNonExportProperties();
-        $route->removeClosureAction();
+        $route->transformClosureAction($routeFile);
         $export = "<?php\r\nreturn ". var_export($route, true) .";";
         file_put_contents($cacheFile, $export);
     } else {

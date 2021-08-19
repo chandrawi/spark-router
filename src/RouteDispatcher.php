@@ -3,6 +3,7 @@
 namespace SparkLib\SparkRouter;
 
 use SparkLib\SparkRouter\RouteFactory;
+use SparkLib\SparkRouter\ClosurePointer;
 
 class RouteDispatcher
 {
@@ -37,7 +38,7 @@ class RouteDispatcher
     public function __construct()
     {
         $this->status = self::NOT_FOUND;
-        $this->action = false;
+        $this->action = null;
         $this->data = [];
     }
 
@@ -188,11 +189,8 @@ class RouteDispatcher
             }
         }
 
-        if ($this->action === null) {
-            $routes = require $this->directory . $this->fileName;
-            if ($routes instanceof RouteFactory) {
-                return $this->dispatch($routes, $method, $uri);
-            }
+        if ($this->action instanceof ClosurePointer) {
+            $this->action = self::getClosureAction($this->action);
         }
         return $this->routeInfo();
     }
@@ -251,6 +249,22 @@ class RouteDispatcher
             }
         }
         return false;
+    }
+
+    /**
+     * Getting original closure from a ClosurePointer object
+     * @param ClosurePointer $action
+     */
+    private static function getClosureAction(ClosurePointer $action)
+    {
+        $routes = require $action->filePath;
+        if ($routes instanceof RouteFactory) {
+            if (is_int($action->index)) {
+                return $routes->dynamicRoutes()[$action->index][4];
+            } else {
+                return $routes->staticRoutes()[$action->index[0]][$action->index[1]];
+            }
+        }
     }
 
     /**

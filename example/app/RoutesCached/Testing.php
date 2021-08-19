@@ -26,7 +26,11 @@ return SparkLib\SparkRouter\RouteFactory::__set_state(array(
       ),
       2 => false,
       3 => 'GET',
-      4 => NULL,
+      4 => 
+      SparkLib\SparkRouter\ClosurePointer::__set_state(array(
+         'filePath' => '/var/www/spark-router/example/app/Routes/Testing.php',
+         'index' => 0,
+      )),
     ),
     1 => 
     array (

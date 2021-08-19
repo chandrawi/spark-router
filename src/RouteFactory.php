@@ -2,6 +2,8 @@
 
 namespace SparkLib\SparkRouter;
 
+use SparkLib\SparkRouter\ClosurePointer;
+
 class RouteFactory
 {
 
@@ -210,20 +212,23 @@ class RouteFactory
     }
 
     /**
-     * Remove closure action of routes
+     * Transform closure action of routes to closure pointer object
      */
-    public function removeClosureAction(): void
+    public function transformClosureAction(string $filePath): void
     {
+        $array = array('filePath' => $filePath);
         foreach ($this->staticRoutes as $uriKey => $routes) {
             foreach ($routes as $methodKey => $action) {
                 if (is_callable($action)) {
-                    $this->staticRoutes[$uriKey][$methodKey] = null;
+                    $array['index'] = array($uriKey, $methodKey);
+                    $this->staticRoutes[$uriKey][$methodKey] = ClosurePointer::__set_state($array);
                 }
             }
         }
         foreach ($this->dynamicRoutes as $key => $route) {
             if (is_callable($route[4])) {
-                $this->dynamicRoutes[$key][4] = null;
+                $array['index'] = $key;
+                $this->dynamicRoutes[$key][4] = ClosurePointer::__set_state($array);
             }
         }
     }
