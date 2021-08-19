@@ -17,25 +17,8 @@ class Loader
     public function run()
     {
         $uri = $this->dispatcher->prepareUri($_SERVER['REQUEST_URI'], BASE_URI);
-        $routes = $this->dispatcher->getRoutesFile($uri, ROUTE_DIR, ROUTE_FILES);
+        $routes = $this->dispatcher->getRoutesFile($uri, ROUTE_CACHED_DIR, ROUTE_FILES);
         $dispatch = $this->dispatcher->dispatch($routes, $_SERVER['REQUEST_METHOD'], $uri);
-        
-        if ($dispatch['status'] == RouteDispatcher::FOUND) {
-            $this->action($dispatch['action'], $dispatch['data']);
-        }
-        else if ($dispatch['status'] == RouteDispatcher::METHOD_NOT_ALLOWED) {
-            $this->methodNotAllowed();
-        }
-        else {
-            $this->notFound();
-        }
-    }
-
-    public function runCached()
-    {
-        $uri = $this->dispatcher->prepareUri($_SERVER['REQUEST_URI'], BASE_URI);
-        $routes = $this->dispatcher->getCachedRoutesFile($uri, ROUTE_DIR, ROUTE_CACHED_DIR, ROUTE_FILES);
-        $dispatch = $this->dispatcher->dispatchCached($routes, $_SERVER['REQUEST_METHOD'], $uri);
         
         if ($dispatch['status'] == RouteDispatcher::FOUND) {
             $this->action($dispatch['action'], $dispatch['data']);

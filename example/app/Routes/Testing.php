@@ -8,9 +8,11 @@ $route->groupPrefix("/testing");
 
 $route->get('/', 'Testing@index');
 
-$route->get('/closure/{input}', function ($input) {
+$use = 'the local data';
+$route->get('/closure/{input}', function ($input) use ($use) {
     echo "<h1>Closure Route</h1><br/>";
     echo "<h2>input : $input</h2>";
+    echo "<h2>use : $use</h2>";
 });
 
 $route->get('/path', 'Testing@path');
